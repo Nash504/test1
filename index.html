@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Application</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+   
+</head>
+<body>
+
+    <div id="chat-container">
+        <h1 data-value="PRIVATE ROOM ESTABLISHED">PRIVATE ROOM ESTABLISHED</h1>
+        <div id="messages"></div>
+        <div id="chat-input">
+            <textarea id="message" placeholder="Type a message..." rows="2"></textarea>
+            <button onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+    <script>
+        const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+        let interval = null;
+      document.querySelector("h1").onmouseover = event => {  
+        let iteration = 0;
+        
+        clearInterval(interval);
+        
+        interval = setInterval(() => {
+          event.target.innerText = event.target.innerText
+            .split("")
+            .map((letter, index) => {
+              if(index < iteration) {
+                return event.target.dataset.value[index];
+              }
+            
+              return letters[Math.floor(Math.random() * 26)]
+            })
+            .join("");
+          
+          if(iteration >= event.target.dataset.value.length){ 
+            clearInterval(interval);
+          }
+          
+          iteration += 1 / 3;
+        }, 50);
+
+        event.target.onmouseover = null; // Disable the effect after it has been triggered once
+      }
+      const socket = io();
+
+        socket.on('connect', () => {
+            const username = prompt("Enter your username:");
+            socket.emit('set_username', username);
+        });
+
+        socket.on('message', (msg) => {
+            const messages = document.getElementById('messages');
+            const formattedMessage = msg.replace(/\n/g, '<br>'); // Replace line breaks with <br>
+            messages.innerHTML += `<p>${formattedMessage}</p>`;
+        });
+
+        function sendMessage() {
+            const message = document.getElementById('message').value;
+            socket.emit('send_message', message);
+            document.getElementById('message').value = '';
+        }
+    </script>
+</body>
+</html>
