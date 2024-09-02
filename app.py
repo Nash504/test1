@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, session, redirect, url_for
 from flask_socketio import SocketIO, emit
 
 app = Flask(__name__)
+app.secret_key = 'your_secret_key_here'
 socketio = SocketIO(app)
 
 clients = {}
@@ -43,4 +44,3 @@ def handle_send_message(msg):
 
 if __name__ == '__main__':
     socketio.run(app, debug=True)
-
