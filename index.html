@@ -51,7 +51,7 @@
       const socket = io();
 
         socket.on('connect', () => {
-            const username = prompt("Enter your username:");
+            const username = decodeURIComponent(new URLSearchParams(window.location.search).get('username'));
             socket.emit('set_username', username);
         });
 
