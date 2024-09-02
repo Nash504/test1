@@ -1,19 +1,30 @@
-from flask import Flask, render_template,request
+from flask import Flask, render_template, request, session, redirect, url_for
 from flask_socketio import SocketIO, emit
+
 app = Flask(__name__)
+app.secret_key = 'your_secret_key'  # Set a secret key for session management
 socketio = SocketIO(app)
 
 clients = {}
 
-@app.route('/')
+@app.route('/', methods=['GET'])
+def login():
+    return render_template('login.html')
+
+@app.route('/index', methods=['GET'])
 def index():
-    return render_template('index.html')
+    username = request.args.get('username')
+    if username:
+        session['username'] = username
+    if 'username' not in session:
+        return redirect(url_for('login'))
+    return render_template('index.html', username=session['username'])
 
 @socketio.on('connect')
 def handle_connect():
     print("A user connected")
 
-@socketio.on('disconnect') # browser is closed
+@socketio.on('disconnect')
 def handle_disconnect():
     print("A user disconnected")
     username = clients.get(request.sid)
@@ -33,3 +44,4 @@ def handle_send_message(msg):
 
 if __name__ == '__main__':
     socketio.run(app, debug=True)
+
