@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='login.css') }}">
+</head>
+<body>
+    <h1 data-value="PRIVATE ROOM ESTABLISHED">PRIVATE CHAT</h1>
+    <div class="login-container">
+        <h2>Enter Your Username</h2>
+        <form id="loginForm" onsubmit="return redirectToChat()">
+            <input type="text" id="username" name="username" placeholder="Username" required>
+            <button onsubmit="redirectToChat()" type="submit" >Enter Chat</button>
+        </form>
+    </div>
+
+    <script>
+        function redirectToChat() {
+            const username = document.getElementById('username').value;
+            if (username.trim() === '') {
+                alert('Please enter a username.');
+                return false;
+            }
+            window.location.href = `/index?username=${encodeURIComponent(username)}`;
+            return false; 
+            
+        }
+    </script>
+</body>
+</html>
