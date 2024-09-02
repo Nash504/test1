@@ -2,7 +2,6 @@ from flask import Flask, render_template, request, session, redirect, url_for
 from flask_socketio import SocketIO, emit
 
 app = Flask(__name__)
-app.secret_key = 'your_secret_key'  # Set a secret key for session management
 socketio = SocketIO(app)
 
 clients = {}
